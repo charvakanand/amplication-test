@@ -1,0 +1,152 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ScholarshipApplication {
+  createdAt     DateTime                          @default(now())
+  evaluations   Evaluation[]
+  id            String                            @id @default(cuid())
+  isDraft       Boolean?
+  responses     Json?
+  scholarship   Scholarship?                      @relation(fields: [scholarshipId], references: [id])
+  scholarshipId String?
+  status        EnumScholarshipApplicationStatus?
+  student       Student?                          @relation(fields: [studentId], references: [id])
+  studentId     String?
+  updatedAt     DateTime                          @updatedAt
+}
+
+model Scholarship {
+  createdAt               DateTime                 @default(now())
+  description             String?
+  id                      String                   @id @default(cuid())
+  isPublished             Boolean?
+  scholarshipApplications ScholarshipApplication[]
+  scholarshipProvider     ScholarshipProvider?     @relation(fields: [scholarshipProviderId], references: [id])
+  scholarshipProviderId   String?
+  shortlistingStage       String?
+  title                   String?
+  updatedAt               DateTime                 @updatedAt
+}
+
+model StaffMember {
+  createdAt DateTime             @default(now())
+  email     String?
+  firstName String?
+  id        String               @id @default(cuid())
+  lastName  String?
+  role      EnumStaffMemberRole?
+  updatedAt DateTime             @updatedAt
+}
+
+model Evaluation {
+  assessmentType           EnumEvaluationAssessmentType?
+  comments                 String?
+  createdAt                DateTime                      @default(now())
+  evaluator                String?
+  id                       String                        @id @default(cuid())
+  scholarshipApplication   ScholarshipApplication?       @relation(fields: [scholarshipApplicationId], references: [id])
+  scholarshipApplicationId String?
+  score                    Float?
+  updatedAt                DateTime                      @updatedAt
+}
+
+model ScholarshipProvider {
+  contactEmail     String?
+  createdAt        DateTime                                 @default(now())
+  id               String                                   @id @default(cuid())
+  name             String?
+  onboardingStatus EnumScholarshipProviderOnboardingStatus?
+  scholarships     Scholarship[]
+  updatedAt        DateTime                                 @updatedAt
+}
+
+model Student {
+  createdAt               DateTime                 @default(now())
+  email                   String?
+  firstName               String?
+  id                      String                   @id @default(cuid())
+  kycDetails              Json?
+  kycStatus               EnumStudentKycStatus?
+  lastName                String?
+  scholarshipApplications ScholarshipApplication[]
+  updatedAt               DateTime                 @updatedAt
+}
+
+model ShortlistingStage {
+  createdAt   DateTime                        @default(now())
+  createdBy   String?
+  definedBy   EnumShortlistingStageDefinedBy?
+  description String?
+  id          String                          @id @default(cuid())
+  name        String?
+  order       Int?
+  parameters  Json?
+  typeField   EnumShortlistingStageTypeField?
+  updatedAt   DateTime                        @updatedAt
+}
+
+model EligibilityCriteria {
+  academicBackground String?
+  createdAt          DateTime                       @default(now())
+  createdBy          String?
+  gender             EnumEligibilityCriteriaGender?
+  id                 String                         @id @default(cuid())
+  incomeBracket      String?
+  maxAge             Int?
+  minAge             Int?
+  otherRequirements  String?
+  updatedAt          DateTime                       @updatedAt
+}
+
+model OutreachPartner {
+  createdAt  DateTime                      @default(now())
+  email      String?
+  id         String                        @id @default(cuid())
+  kycDetails Json?
+  kycStatus  EnumOutreachPartnerKycStatus?
+  name       String?
+  phone      String?
+  updatedAt  DateTime                      @updatedAt
+}
+
+enum EnumScholarshipApplicationStatus {
+  Option1
+}
+
+enum EnumStaffMemberRole {
+  Option1
+}
+
+enum EnumEvaluationAssessmentType {
+  Option1
+}
+
+enum EnumScholarshipProviderOnboardingStatus {
+  Option1
+}
+
+enum EnumStudentKycStatus {
+  Option1
+}
+
+enum EnumShortlistingStageDefinedBy {
+  Option1
+}
+
+enum EnumShortlistingStageTypeField {
+  Option1
+}
+
+enum EnumEligibilityCriteriaGender {
+  Option1
+}
+
+enum EnumOutreachPartnerKycStatus {
+  Option1
+}
